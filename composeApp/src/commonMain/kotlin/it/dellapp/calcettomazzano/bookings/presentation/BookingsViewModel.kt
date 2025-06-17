@@ -1,27 +1,24 @@
 package it.dellapp.calcettomazzano.bookings.presentation
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
-
 import it.dellapp.calcettomazzano.bookings.domain.usecase.GetBookingsDataUseCase
-import it.dellapp.calcettomazzano.bookings.presentation.BookingsAction
-import it.dellapp.calcettomazzano.bookings.presentation.BookingsEvent
-import it.dellapp.calcettomazzano.bookings.presentation.BookingsState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.toLocalDateTime
 
 /**
  * Gestisce la logica di business e lo stato per la feature Bookings.
  */
 
-class BookingsViewModel  constructor(
+class BookingsViewModel constructor(
     private val getBookingsDataUseCase: GetBookingsDataUseCase
 ) : ViewModel() {
 
@@ -37,7 +34,7 @@ class BookingsViewModel  constructor(
 
     fun onAction(action: BookingsAction) {
         when (action) {
-            // Aggiungere qui la gestione delle azioni specifiche
+            is BookingsAction.DateChanged -> getBookingsData(date = action.date.toString())
             else -> {
                 // Azione non gestita
             }
@@ -45,17 +42,20 @@ class BookingsViewModel  constructor(
     }
 
     private fun loadInitialData() {
+        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+        getBookingsData(today.toString())
+    }
+
+    private fun getBookingsData(date: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            getBookingsDataUseCase(date = today.toString())
+            getBookingsDataUseCase(date = date)
                 .onSuccess { bookings ->
                     _state.update { it.copy(bookings = bookings) }
                 }
                 .onFailure {
                     _state.update { it.copy(error = it.error) }
                 }
-
             _state.update { it.copy(isLoading = false) }
         }
     }

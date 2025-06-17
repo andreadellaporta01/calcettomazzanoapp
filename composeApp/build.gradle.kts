@@ -55,6 +55,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.navigation)
             implementation(libs.networking)
+            implementation(libs.mp.date.picker)
         }
 
         commonTest.dependencies {

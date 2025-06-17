@@ -22,6 +22,7 @@ koin = "4.1.0"
 nav3Core = "1.0.0-alpha03"
 navigation = "2.9.0-beta02"
 networking = "2.10.55"
+datepicker = "0.2.1"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
@@ -55,6 +56,7 @@ koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koin-composeVM = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 androidx-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 networking = { module = "global.deveng:networking-kmp", version.ref = "networking" }
+mp-date-picker = { module = "network.chaintech:kmp-date-time-picker", version = "1.0.9" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
