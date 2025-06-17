@@ -1,5 +1,7 @@
 package it.dellapp.calcettomazzano.bookings.domain.repository
 
+import it.dellapp.calcettomazzano.addbooking.data.model.SlotDto
+import it.dellapp.calcettomazzano.addbooking.domain.model.FreeSlot
 import it.dellapp.calcettomazzano.bookings.domain.model.Booking
 
 /**

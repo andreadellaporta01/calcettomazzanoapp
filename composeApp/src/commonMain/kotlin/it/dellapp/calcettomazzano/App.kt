@@ -4,9 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import it.dellapp.calcettomazzano.addbooking.data.di.addbookingDataModule
+import it.dellapp.calcettomazzano.addbooking.domain.di.addbookingDomainModule
+import it.dellapp.calcettomazzano.addbooking.presentation.AddbookingRoot
+import it.dellapp.calcettomazzano.addbooking.presentation.addBookingRoute
+import it.dellapp.calcettomazzano.addbooking.presentation.di.addbookingPresentationModule
 import it.dellapp.calcettomazzano.api.NetworkModule
 import it.dellapp.calcettomazzano.bookings.data.di.bookingsDataModule
 import it.dellapp.calcettomazzano.bookings.domain.di.bookingsDomainModule
+import it.dellapp.calcettomazzano.bookings.presentation.BookingsEvent
 import it.dellapp.calcettomazzano.bookings.presentation.BookingsRoot
 import it.dellapp.calcettomazzano.bookings.presentation.BookingsRoute
 import it.dellapp.calcettomazzano.bookings.presentation.di.bookingsPresentationModule
@@ -22,7 +28,25 @@ fun App() {
         navController = navController,
         startDestination = BookingsRoute
     ) {
-        composable<BookingsRoute> { BookingsRoot(onEvent = {}) }
+        composable<BookingsRoute> {
+            BookingsRoot(onEvent = { event ->
+                when (event) {
+                    is BookingsEvent.NavigateToAddBooking -> navController.navigate(
+                        "$addBookingRoute/${event.date}"
+                    )
+
+                    else -> {}
+                }
+            })
+        }
+        composable(
+            "$addBookingRoute/{date}",
+        ) { backStackEntry ->
+            AddbookingRoot(
+                onEvent = {},
+                date = backStackEntry.savedStateHandle.get<String>("date").orEmpty()
+            )
+        }
     }
 }
 
@@ -33,7 +57,10 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         modules(
             bookingsDataModule,
             bookingsDomainModule,
-            bookingsPresentationModule
+            bookingsPresentationModule,
+            addbookingDataModule,
+            addbookingDomainModule,
+            addbookingPresentationModule,
         )
     }
 }

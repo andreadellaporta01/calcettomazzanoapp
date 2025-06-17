@@ -6,4 +6,5 @@ package it.dellapp.calcettomazzano.bookings.presentation
  */
 sealed interface BookingsEvent {
     // Esempio: data class NavigateToDetails(val screenId: String) : BookingsEvent
+    data class NavigateToAddBooking(val date: String) : BookingsEvent
 }

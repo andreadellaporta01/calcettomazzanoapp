@@ -9,6 +9,6 @@ import kotlinx.datetime.LocalDate
  */
 sealed interface BookingsAction {
     data class BookingClicked(val booking: Booking) : BookingsAction
-    class AddBookingClicked() : BookingsAction
     data class DateChanged(val date: LocalDate) : BookingsAction
+    data class AddBookingDateSelected(val date: LocalDate) : BookingsAction
 }

@@ -35,6 +35,11 @@ class BookingsViewModel constructor(
     fun onAction(action: BookingsAction) {
         when (action) {
             is BookingsAction.DateChanged -> getBookingsData(date = action.date.toString())
+            is BookingsAction.AddBookingDateSelected -> viewModelScope.launch {
+                _event.emit(
+                    BookingsEvent.NavigateToAddBooking(action.date.toString())
+                )
+            }
             else -> {
                 // Azione non gestita
             }

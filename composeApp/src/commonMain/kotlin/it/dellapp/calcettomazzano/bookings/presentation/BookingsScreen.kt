@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -111,6 +110,17 @@ fun BookingsContent(
     onDateChange: (LocalDate) -> Unit,
     onAction: (BookingsAction) -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    val today = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+    val todayMillis = today.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+    val dateState = rememberDatePickerState(
+        initialSelectedDateMillis = selectedDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= todayMillis
+            }
+        }
+    )
     Scaffold(
         topBar = {
             Column {
@@ -137,7 +147,9 @@ fun BookingsContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onAction(BookingsAction.AddBookingClicked()) },
+                onClick = {
+                    showDialog = true
+                },
                 containerColor = Color(0xFF388E3C),
                 contentColor = Color.White
             ) {
@@ -150,6 +162,28 @@ fun BookingsContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            if (showDialog) {
+                DatePickerDialog(
+                    onDismissRequest = { showDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showDialog = false
+                            val pickedDate =
+                                Instant.fromEpochMilliseconds(dateState.selectedDateMillis ?: 0)
+                                    .toLocalDateTime(TimeZone.UTC)
+                                    .date
+                            onAction.invoke(BookingsAction.AddBookingDateSelected(pickedDate))
+                        }) {
+                            Text("OK")
+                        }
+                    }
+                ) {
+                    DatePicker(
+                        state = dateState,
+                        showModeToggle = true,
+                    )
+                }
+            }
             if (bookings.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Nessuna prenotazione")
@@ -205,9 +239,10 @@ fun DatePickerSelector(
             confirmButton = {
                 TextButton(onClick = {
                     showDialog = false
-                    val pickedDate = Instant.fromEpochMilliseconds(dateState.selectedDateMillis ?: 0)
-                        .toLocalDateTime(TimeZone.UTC)
-                        .date
+                    val pickedDate =
+                        Instant.fromEpochMilliseconds(dateState.selectedDateMillis ?: 0)
+                            .toLocalDateTime(TimeZone.UTC)
+                            .date
                     onDateChange(pickedDate)
                 }) {
                     Text("OK")
