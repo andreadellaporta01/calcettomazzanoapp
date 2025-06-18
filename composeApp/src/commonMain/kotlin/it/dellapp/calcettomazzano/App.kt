@@ -4,13 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import it.dellapp.calcettomazzano.common.api.NetworkModule
 import it.dellapp.calcettomazzano.features.addbooking.data.di.addbookingDataModule
 import it.dellapp.calcettomazzano.features.addbooking.domain.di.addbookingDomainModule
-import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingRoot
-import it.dellapp.calcettomazzano.features.addbooking.presentation.addBookingRoute
-import it.dellapp.calcettomazzano.features.addbooking.presentation.di.addbookingPresentationModule
-import it.dellapp.calcettomazzano.common.api.NetworkModule
 import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingEvent
+import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingRoot
+import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingRoute
+import it.dellapp.calcettomazzano.features.addbooking.presentation.di.addbookingPresentationModule
 import it.dellapp.calcettomazzano.features.bookings.data.di.bookingsDataModule
 import it.dellapp.calcettomazzano.features.bookings.domain.di.bookingsDomainModule
 import it.dellapp.calcettomazzano.features.bookings.presentation.BookingsEvent
@@ -33,16 +34,15 @@ fun App() {
             BookingsRoot(onEvent = { event ->
                 when (event) {
                     is BookingsEvent.NavigateToAddBooking -> navController.navigate(
-                        "$addBookingRoute/${event.date}"
+                        AddbookingRoute(event.date)
                     )
 
                     else -> {}
                 }
             })
         }
-        composable(
-            "$addBookingRoute/{date}",
-        ) { backStackEntry ->
+        composable<AddbookingRoute> { backStackEntry ->
+            val addbookingRoute = backStackEntry.toRoute<AddbookingRoute>()
             AddbookingRoot(
                 onEvent = { event ->
                     when (event) {
@@ -50,10 +50,11 @@ fun App() {
                         is AddbookingEvent.AddBookingSuccess -> {
                             navController.popBackStack()
                         }
+
                         else -> {}
                     }
                 },
-                date = backStackEntry.savedStateHandle.get<String>("date").orEmpty()
+                date = addbookingRoute.date
             )
         }
     }

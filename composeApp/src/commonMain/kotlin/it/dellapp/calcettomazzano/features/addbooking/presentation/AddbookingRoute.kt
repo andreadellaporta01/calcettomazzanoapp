@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
  * Utilizzato da una libreria di navigazione type-safe.
  */
 
-const val addBookingRoute = "addbooking"
+@Serializable
+data class AddbookingRoute(val date: String)
