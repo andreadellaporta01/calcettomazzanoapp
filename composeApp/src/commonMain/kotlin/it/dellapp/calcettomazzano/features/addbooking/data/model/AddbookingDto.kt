@@ -17,7 +17,7 @@ data class AddbookingDto(
     val endTime: String,
     val firstName: String,
     val lastName: String,
-    val phone: String,
+    val code: String,
     val email: String? = null,
     val notes: String? = null
 )

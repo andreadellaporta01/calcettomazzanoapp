@@ -1,16 +1,16 @@
 package it.dellapp.calcettomazzano.features.addbooking.presentation
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.dellapp.calcettomazzano.features.addbooking.data.model.AddbookingDto
-
-
 import it.dellapp.calcettomazzano.features.addbooking.domain.usecase.GetAddbookingDataUseCase
 import it.dellapp.calcettomazzano.features.addbooking.domain.usecase.GetFreeSlotsDataUseCase
-import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingAction
-import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingEvent
-import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -32,6 +32,9 @@ class AddbookingViewModel  constructor(
         when (action) {
             is AddbookingAction.GetFreeSlots -> getFreeSlots(action.date)
             is AddbookingAction.AddBooking -> addBooking(action.booking)
+            is AddbookingAction.Cancel -> viewModelScope.launch {
+                _event.emit(AddbookingEvent.NavigateBack())
+            }
             else -> {
                 // Azione non gestita
             }
@@ -45,6 +48,7 @@ class AddbookingViewModel  constructor(
             getAddbookingDataUseCase(addbookingDto)
                 .onSuccess { success ->
                     _state.update { it.copy(bookingSuccess = Unit) }
+                    _event.emit(AddbookingEvent.AddBookingSuccess())
                 }
                 .onFailure { error ->
                     _state.update { it.copy(error = "Errore nella prenotazione") }

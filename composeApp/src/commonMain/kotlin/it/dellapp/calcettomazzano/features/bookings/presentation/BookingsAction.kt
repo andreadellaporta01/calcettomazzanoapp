@@ -8,7 +8,8 @@ import kotlinx.datetime.LocalDate
  * per la feature Bookings.
  */
 sealed interface BookingsAction {
-    data class BookingClicked(val booking: Booking) : BookingsAction
     data class DateChanged(val date: LocalDate) : BookingsAction
     data class AddBookingDateSelected(val date: LocalDate) : BookingsAction
+    class Refresh(val date: LocalDate) : BookingsAction
+    data class DeleteBooking(val bookingId: Int, val date: LocalDate) : BookingsAction
 }

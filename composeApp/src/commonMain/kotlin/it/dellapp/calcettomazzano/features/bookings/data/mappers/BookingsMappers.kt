@@ -10,10 +10,13 @@ import it.dellapp.calcettomazzano.features.bookings.domain.model.Booking
  */
 fun BookingDto.toDomain(): Booking {
     return Booking(
+        id = id,
         date = date,
         startTime = startTime,
         endTime = endTime,
         firstName = firstName,
-        lastName = lastName
+        lastName = lastName,
+        email = email,
+        code = code
     )
 }

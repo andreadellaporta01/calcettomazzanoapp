@@ -14,4 +14,5 @@ interface BookingsRepository {
      * o un'eccezione in caso di fallimento.
      */
     suspend fun getBookingsData(date: String): Result<List<Booking>>
+    suspend fun deleteBooking(id: Int): Result<Unit>
 }

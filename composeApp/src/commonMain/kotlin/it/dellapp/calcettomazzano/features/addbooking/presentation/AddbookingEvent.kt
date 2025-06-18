@@ -6,4 +6,6 @@ package it.dellapp.calcettomazzano.features.addbooking.presentation
  */
 sealed interface AddbookingEvent {
     // Esempio: data class NavigateToDetails(val screenId: String) : AddbookingEvent
+    class NavigateBack : AddbookingEvent
+    class AddBookingSuccess : AddbookingEvent
 }

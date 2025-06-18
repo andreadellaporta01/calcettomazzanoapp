@@ -9,4 +9,5 @@ import it.dellapp.calcettomazzano.features.addbooking.data.model.AddbookingDto
 sealed interface AddbookingAction {
     data class GetFreeSlots(val date: String) : AddbookingAction
     data class AddBooking(val booking: AddbookingDto) : AddbookingAction
+    class Cancel() : AddbookingAction
 }

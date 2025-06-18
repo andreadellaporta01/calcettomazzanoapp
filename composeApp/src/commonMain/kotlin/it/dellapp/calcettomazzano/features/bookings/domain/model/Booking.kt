@@ -8,9 +8,12 @@ package it.dellapp.calcettomazzano.features.bookings.domain.model
  * @property data Un campo dati di esempio per il modello.
  */
 data class Booking(
+    val id: Int,
     val date: String,
     val startTime: String,
     val endTime: String,
     val firstName: String,
-    val lastName: String
+    val lastName: String,
+    val email: String,
+    val code: String
 )

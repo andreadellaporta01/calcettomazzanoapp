@@ -19,4 +19,13 @@ class DefaultBookingsRepository constructor() : BookingsRepository {
             Result.failure(e)
         }
     }
+
+    override suspend fun deleteBooking(id: Int): Result<Unit> {
+        return try {
+            ApiClient.deleteBooking(id)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

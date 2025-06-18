@@ -30,4 +30,11 @@ object ApiClient {
             requestBody = addbookingDto
         )
     }
+
+    suspend fun deleteBooking(bookingId: Int): HttpResponse? {
+        return DevengNetworkingModule.sendRequestForHttpResponse<AddbookingDto>(
+            endpoint = "/bookings/$bookingId",
+            requestMethod = DevengHttpMethod.DELETE,
+        )
+    }
 }

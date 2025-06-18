@@ -10,6 +10,7 @@ import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingRoo
 import it.dellapp.calcettomazzano.features.addbooking.presentation.addBookingRoute
 import it.dellapp.calcettomazzano.features.addbooking.presentation.di.addbookingPresentationModule
 import it.dellapp.calcettomazzano.common.api.NetworkModule
+import it.dellapp.calcettomazzano.features.addbooking.presentation.AddbookingEvent
 import it.dellapp.calcettomazzano.features.bookings.data.di.bookingsDataModule
 import it.dellapp.calcettomazzano.features.bookings.domain.di.bookingsDomainModule
 import it.dellapp.calcettomazzano.features.bookings.presentation.BookingsEvent
@@ -43,7 +44,15 @@ fun App() {
             "$addBookingRoute/{date}",
         ) { backStackEntry ->
             AddbookingRoot(
-                onEvent = {},
+                onEvent = { event ->
+                    when (event) {
+                        is AddbookingEvent.NavigateBack -> navController.popBackStack()
+                        is AddbookingEvent.AddBookingSuccess -> {
+                            navController.popBackStack()
+                        }
+                        else -> {}
+                    }
+                },
                 date = backStackEntry.savedStateHandle.get<String>("date").orEmpty()
             )
         }

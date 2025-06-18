@@ -3,6 +3,7 @@ package it.dellapp.calcettomazzano.features.bookings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import it.dellapp.calcettomazzano.features.bookings.domain.usecase.DeleteBookingUseCase
 import it.dellapp.calcettomazzano.features.bookings.domain.usecase.GetBookingsDataUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,8 @@ import kotlinx.datetime.toLocalDateTime
  */
 
 class BookingsViewModel constructor(
-    private val getBookingsDataUseCase: GetBookingsDataUseCase
+    private val getBookingsDataUseCase: GetBookingsDataUseCase,
+    private val deleteBookingUseCase: DeleteBookingUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BookingsState())
@@ -40,6 +42,8 @@ class BookingsViewModel constructor(
                     BookingsEvent.NavigateToAddBooking(action.date.toString())
                 )
             }
+            is BookingsAction.Refresh -> getBookingsData(date = action.date.toString())
+            is BookingsAction.DeleteBooking -> deleteBooking(id = action.bookingId, date = action.date.toString())
             else -> {
                 // Azione non gestita
             }
@@ -57,6 +61,20 @@ class BookingsViewModel constructor(
             getBookingsDataUseCase(date = date)
                 .onSuccess { bookings ->
                     _state.update { it.copy(bookings = bookings) }
+                }
+                .onFailure {
+                    _state.update { it.copy(error = it.error) }
+                }
+            _state.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private fun deleteBooking(id: Int, date: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            deleteBookingUseCase(id = id)
+                .onSuccess { bookings ->
+                    getBookingsData(date)
                 }
                 .onFailure {
                     _state.update { it.copy(error = it.error) }

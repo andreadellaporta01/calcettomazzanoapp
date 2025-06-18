@@ -20,7 +20,6 @@ data class BookingDto(
     val firstName: String,
     val id: Int,
     val lastName: String,
-    val notes: String?,
-    val phone: String,
+    val code: String,
     val startTime: String
 )
